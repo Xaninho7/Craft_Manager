@@ -1,0 +1,3 @@
+residue 193x79+1072+246
+clicks 53x24+1281+232
+blueprint 589x28+1020+587
