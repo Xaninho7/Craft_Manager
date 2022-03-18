@@ -10,6 +10,7 @@ from ScreenRead import ScreenRead
 
 class Run:
     def __init__(self, conn, listBPs, settings):
+        self.totalResd = 0.0
         self.clickUpdThr = None
         self.loadBut = None
         self.clicksWinBut = None
@@ -140,7 +141,7 @@ class Run:
     def shallowSave(self):
         metalIni = int(self.ini_metal.get())
         finMet = int(self.fin_metal.get())
-        total = (metalIni + self.readChat.gainedResidue - finMet) / 100
+        self.totalResd = (metalIni - (self.readChat.gainedResidue + finMet)) / 100
         if not self.limitedItem:
             total = 0
         clk = str(self.total_clicks.get())
@@ -148,7 +149,7 @@ class Run:
             clk = 0
         else:
             clk = int(self.total_clicks.get())
-        sql = f'UPDATE Runs SET Clicks = {clk}, ResidueSpent = {total} WHERE id = {self.idRun};'
+        sql = f'UPDATE Runs SET Clicks = {clk}, ResidueSpent = {self.totalResd} WHERE id = {self.idRun};'
         cur = self.conn.cursor()
         cur.execute(sql)
 
@@ -157,10 +158,13 @@ class Run:
         self.saveButton.configure(state='disabled', bg='gray')
         self.statusLabel.configure(text='Successfully saved!!')
         self.loadBut.configure(state='normal')
+        self.total_clicks.delete(0, END)
+        self.total_clicks.insert(END, '0')
+        self.readChat.gainedResidue = 0
 
     def updateSettings(self):
         text = f'residue {self.getRes.defaultWindow}\nclicks {self.getClicks.defaultWindow}\n' \
-               f'blueprint {self.getBP.defaultWindow}'
+               f'blueprint {self.getBP.defaultWindow}\n \n{self.totalResd}'
         with open('windowSettings.txt', 'w') as file:
             file.write(text)
 

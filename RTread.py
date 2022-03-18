@@ -7,7 +7,7 @@ from sqlite3 import Error
 
 class ReadLines:
     def __init__(self):
-        self.gainedResidue = None
+        self.gainedResidue = 0
         self.logFile = None
         self.time_gap_sec = None
         self.amount = None
@@ -27,7 +27,6 @@ class ReadLines:
         self.runClicks = 0
 
     def file_reader(self, logfile):
-        print('read has started')
         logfile.seek(0, os.SEEK_END)
         i = 0
         while self.running:
@@ -63,7 +62,6 @@ class ReadLines:
 
         path = 'C:\\Users\$USERNAME\Documents\Entropia Universe\chat.log'
 
-
         filepath = os.path.expandvars(path)
         self.logFile = open(filepath, "r", encoding="Latin-1")
         logLines = self.file_reader(self.logFile)
@@ -82,9 +80,8 @@ class ReadLines:
             print(self.line)
             if '[] You received' in line:
                 self.get_variables(line)
-                if isLimited:
-                    if 'Metal Residue' in self.item or "Energy Matter Residue" in self.item:
-                        self.gainedResidue += self.value
+                if 'Metal Residue' in self.item or "Energy Matter Residue" in self.item:
+                    self.gainedResidue += self.value
                 self.item_time = datetime.strptime(self.item_time, '%Y-%m-%d %H:%M:%S')
                 self.day = self.item_time.strftime("%d/%m/%Y")
                 self.hour = self.item_time.strftime("%H:%M:%S")
@@ -92,20 +89,14 @@ class ReadLines:
                 self.time_gap_sec = self.time_gap.total_seconds()
 
                 if self.time_gap_sec > 2:
-                    print(f'click: {self.click_value}')
                     self.run_value += self.click_value
                     self.click_value = 0
                     self.clicks += 1
-                    # print(self.clicks)
-                    # clicks.read()
-                # print(line)
                 self.click_value += self.value
                 self.run_value += self.value
                 self.previous_time = self.item_time
-                print('é o ficheiro certo!!!!')
                 sql = f'INSERT INTO RunReturn (Data, Hora, Material, Amount, Value, idRun, nClick) ' \
                       f'VALUES (\'{self.day}\', \'{self.hour}\', \'{self.item}\', {self.amount}, {self.value}, {idRun}, {self.clicks} );'
-                print(sql)
                 cur = self.conn.cursor()
                 cur.execute(sql)
 
@@ -113,6 +104,3 @@ class ReadLines:
                 cur = self.conn.cursor()
                 cur.execute(sql)
                 self.conn.commit()
-
-        print('fez o ultimo comit')
-        # self.conn.commit()
