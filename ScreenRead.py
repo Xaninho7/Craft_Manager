@@ -44,10 +44,6 @@ class ScreenRead:
         self.y = self.newWindow.winfo_rooty()
         self.height = self.newWindow.winfo_height()
         self.width = self.newWindow.winfo_width()
-        print('x:', self.newWindow.winfo_rootx())
-        print('y', self.newWindow.winfo_rooty())
-        print('heigth:', self.newWindow.winfo_height())
-        print('width', self.newWindow.winfo_width())
 
     def read(self):
         if not self.setted:

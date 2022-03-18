@@ -7,6 +7,7 @@ from sqlite3 import Error
 
 class ReadLines:
     def __init__(self):
+        self.line = None
         self.gainedResidue = 0
         self.logFile = None
         self.time_gap_sec = None

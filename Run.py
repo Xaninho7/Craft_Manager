@@ -10,6 +10,7 @@ from ScreenRead import ScreenRead
 
 class Run:
     def __init__(self, conn, listBPs, settings):
+        self.total = None
         self.totalResd = 0.0
         self.clickUpdThr = None
         self.loadBut = None
@@ -141,9 +142,9 @@ class Run:
     def shallowSave(self):
         metalIni = int(self.ini_metal.get())
         finMet = int(self.fin_metal.get())
-        self.totalResd = (metalIni - (self.readChat.gainedResidue + finMet)) / 100
+        self.totalResd = (metalIni + self.readChat.gainedResidue - finMet) / 100
         if not self.limitedItem:
-            total = 0
+            self.total = 0
         clk = str(self.total_clicks.get())
         if not clk.isdigit():
             clk = 0
@@ -152,6 +153,7 @@ class Run:
         sql = f'UPDATE Runs SET Clicks = {clk}, ResidueSpent = {self.totalResd} WHERE id = {self.idRun};'
         cur = self.conn.cursor()
         cur.execute(sql)
+        self.conn.commit()
 
     def save(self):
         self.shallowSave()
